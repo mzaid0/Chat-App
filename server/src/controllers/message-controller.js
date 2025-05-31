@@ -2,63 +2,79 @@ import Conversation from "../models/conversation-model.js";
 import Message from "../models/message-model.js";
 
 export const sendMessage = async (req, res) => {
-  const senderId = req.user._id;
-  const receiverId = req.params.id;
-  const { message } = req.body;
+  try {
+    const senderId = req.user._id;
+    const receiverId = req.params.id;
+    const { message } = req.body;
 
-  if (!message || !message.trim()) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Message cannot be empty" });
-  }
+    if (!message || !message.trim()) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Message cannot be empty" });
+    }
 
-  let conversation = await Conversation.findOne({
-    participants: { $all: [senderId, receiverId] },
-  });
+    let conversation = await Conversation.findOne({
+      participants: { $all: [senderId, receiverId] },
+    });
 
-  if (!conversation) {
-    conversation = await Conversation.create({
-      participants: [senderId, receiverId],
-      messages: [],
+    if (!conversation) {
+      conversation = await Conversation.create({
+        participants: [senderId, receiverId],
+        messages: [],
+      });
+    }
+
+    const newMessage = await Message.create({
+      senderId,
+      receiverId,
+      message,
+    });
+
+    if (conversation) {
+      conversation.messages.push(newMessage._id);
+    }
+    await conversation.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Message sent successfully",
+      data: newMessage,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error sending message",
+      error: error.message,
     });
   }
-
-  const newMessage = await Message.create({
-    senderId,
-    receiverId,
-    message,
-  });
-
-  if (conversation) {
-    conversation.messages.push(newMessage._id);
-  }
-  await conversation.save();
-
-  res.status(200).json({
-    success: true,
-    message: "Message sent successfully",
-    data: newMessage,
-  });
 };
 
 export const getMessages = async (req, res) => {
-  const senderId = req.user._id;
-  const receiverId = req.params.id;
+  try {
+    const senderId = req.user._id;
+    const receiverId = req.params.id;
 
-  const conversation = await Conversation.findOne({
-    participants: { $all: [senderId, receiverId] },
-  })
-    .populate("messages")
-    .lean();
+    const conversation = await Conversation.findOne({
+      participants: { $all: [senderId, receiverId] },
+    })
+      .populate("messages")
+      .lean();
 
-  if (!conversation) {
-    return res.status(404).json({
+    if (!conversation) {
+      return res.status(404).json({
+        success: false,
+        message: "Conversation not found",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      messages: conversation.messages,
+    });
+  } catch (error) {
+    res.status(500).json({
       success: false,
-      message: "Conversation not found",
+      message: "Error fetching messages",
+      error: error.message,
     });
   }
-  res.status(200).json({
-    success: true,
-    messages: conversation.messages,
-  });
 };

@@ -6,8 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Loader, Eye, EyeOff } from "lucide-react";
-import api from "@/api/axios-instance"; 
-import useAuthStore from "@/store/useAuthStore"; 
+import api from "@/api/axios-instance";
+import useAuthStore from "@/store/useAuthStore";
 
 function Login() {
   const { register, handleSubmit } = useForm();
@@ -17,14 +17,16 @@ function Login() {
   const setUser = useAuthStore((state) => state.setUser);
 
   const onSubmit = async (data) => {
-    setLoading(true);
     try {
+      setLoading(true);
       const res = await api.post('/auth/login', data);
-      setUser(res.data.user, res.data.token); // Assuming API returns user object and token
+      setUser(res.data.user, res.data.token);
       toast.success("Login successful! Redirecting...");
       setTimeout(() => {
         navigate("/");
       }, 1500);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error logging in");
     } finally {
       setLoading(false);
     }

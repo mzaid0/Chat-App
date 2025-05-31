@@ -7,8 +7,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Loader, Eye, EyeOff } from "lucide-react";
-import api from "@/api/axios-instance"; 
-import useAuthStore from "@/store/useAuthStore"; 
+import api from "@/api/axios-instance";
+import useAuthStore from "@/store/useAuthStore";
 
 function Register() {
   const { register, handleSubmit, control } = useForm();
@@ -18,14 +18,16 @@ function Register() {
   const setUser = useAuthStore((state) => state.setUser);
 
   const onSubmit = async (data) => {
-    setLoading(true);
     try {
+      setLoading(true);
       const res = await api.post('/auth/register', data);
-      setUser(res.data.user, res.data.token); // Assuming API returns user object and token
+      setUser(res.data.user, res.data.token);
       toast.success("Registration successful! Redirecting to login...");
       setTimeout(() => {
         navigate("/login");
       }, 1500);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error registering");
     } finally {
       setLoading(false);
     }
