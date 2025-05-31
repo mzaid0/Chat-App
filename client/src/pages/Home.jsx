@@ -48,26 +48,53 @@ function Home() {
     }
   };
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!message.trim() || !selectedUser) return;
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        content: message,
-        sender: user.username,
-        timestamp: new Date().toLocaleTimeString(),
-      },
-    ]);
-    setMessage("");
+    try {
+      const res = await api.post(`/message/send/${selectedUser._id}`, {
+        message,
+      });
+
+      const msg = res.data.data;
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: msg._id,
+          content: msg.message,
+          sender: msg.senderId.username,
+          timestamp: new Date(msg.createdAt).toLocaleTimeString(),
+        },
+      ]);
+      setMessage("");
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast.error("Could not send message.");
+    }
   };
 
-  const handleSelectUser = (activeUser) => {
+
+  const handleSelectUser = async (activeUser) => {
     setSelectedUser(activeUser);
-    setMessages([]);
+    setMessages([]); // Clear old messages
+
+    try {
+      const res = await api.get(`/message/${activeUser._id}`);
+      const formattedMessages = res.data.messages.map((msg) => ({
+        id: msg._id,
+        content: msg.message,
+        sender: msg.senderId.username,
+        timestamp: new Date(msg.createdAt).toLocaleTimeString(),
+      }));
+      setMessages(formattedMessages);
+    } catch (error) {
+      console.error("Error loading messages:", error);
+      toast.error("Could not load messages.");
+    }
   };
+
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-background">
@@ -149,12 +176,15 @@ function Home() {
                       className={`flex items-center gap-3 mb-1 w-full text-left p-2 rounded-md hover:bg-accent transition-colors ${selectedUser?._id === activeUser._id ? "bg-accent" : ""
                         }`}
                     >
-                      <Avatar>
-                        <AvatarImage src={activeUser.avatar} alt={activeUser.username} />
-                        <AvatarFallback>
-                          {activeUser.fullname.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
+                      <div className="relative">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage src={activeUser.avatar} alt={activeUser.username} />
+                          <AvatarFallback>
+                            {activeUser.fullname.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white dark:border-background" />
+                      </div>
                       <div>
                         <p className="text-sm font-medium">{activeUser.fullname}</p>
                         <p className="text-xs text-muted-foreground">

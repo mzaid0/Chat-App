@@ -24,16 +24,16 @@ export const sendMessage = async (req, res) => {
       });
     }
 
-    const newMessage = await Message.create({
+    let newMessage = await Message.create({
       senderId,
       receiverId,
       message,
     });
 
-    if (conversation) {
-      conversation.messages.push(newMessage._id);
-    }
+    conversation.messages.push(newMessage._id);
     await conversation.save();
+
+    newMessage = await newMessage.populate("senderId", "username fullname");
 
     res.status(200).json({
       success: true,
@@ -57,7 +57,13 @@ export const getMessages = async (req, res) => {
     const conversation = await Conversation.findOne({
       participants: { $all: [senderId, receiverId] },
     })
-      .populate("messages")
+      .populate({
+        path: "messages",
+        populate: {
+          path: "senderId",
+          select: "username fullname",
+        },
+      })
       .lean();
 
     if (!conversation) {
@@ -66,6 +72,7 @@ export const getMessages = async (req, res) => {
         message: "Conversation not found",
       });
     }
+
     res.status(200).json({
       success: true,
       messages: conversation.messages,
