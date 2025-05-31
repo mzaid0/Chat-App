@@ -38,11 +38,14 @@ export const register = async (req, res) => {
     })
     .status(201)
     .json({
-      _id: newUser._id,
-      fullname: newUser.fullname,
-      username: newUser.username,
-      gender: newUser.gender,
-      avatar: newUser.avatar,
+      user: {
+        _id: newUser._id,
+        fullname: newUser.fullname,
+        username: newUser.username,
+        gender: newUser.gender,
+        avatar: newUser.avatar,
+      },
+      token,
     });
 };
 
@@ -68,11 +71,14 @@ export const login = async (req, res) => {
     })
     .status(200)
     .json({
-      _id: user._id,
-      fullname: user.fullname,
-      username: user.username,
-      gender: user.gender,
-      avatar: user.avatar,
+      user: {
+        _id: user._id,
+        fullname: user.fullname,
+        username: user.username,
+        gender: user.gender,
+        avatar: user.avatar,
+      },
+      token,
     });
 };
 

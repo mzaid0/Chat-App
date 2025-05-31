@@ -1,9 +1,9 @@
-import { Route, Routes } from "react-router-dom"
-import Home from "./pages/Home"
-import Login from "./pages/Login"
-import Register from "./pages/Register"
-import ProtectedRoute from "./components/protected-route"
-import PublicRoute from "./components/public-route"
+import { Route, Routes } from "react-router-dom";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ProtectedRoute from "./components/protected-route";
+import PublicRoute from "./components/public-route";
 
 function App() {
   return (
@@ -33,7 +33,7 @@ function App() {
         }
       />
     </Routes>
-  )
+  );
 }
 
-export default App
+export default App;

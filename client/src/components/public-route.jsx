@@ -1,9 +1,12 @@
-import { Navigate } from "react-router-dom"
+import { Navigate } from "react-router-dom";
+import useAuthStore from "@/store/useAuthStore"; 
 
 const PublicRoute = ({ children }) => {
-    const token = localStorage.getItem("token")
-    if (token) return <Navigate to="/" />
-    return children
-}
+  const { user } = useAuthStore();
 
-export default PublicRoute
+  if (user) return <Navigate to="/" replace />;
+
+  return children;
+};
+
+export default PublicRoute;
