@@ -14,7 +14,7 @@ import useAuthStore from "@/store/useAuthStore";
 
 function Home() {
   const navigate = useNavigate();
-  const { user, clearUser } = useAuthStore();
+  const { user, clearUser, onlineUsers } = useAuthStore();
   const [activeUsers, setActiveUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -36,6 +36,9 @@ function Home() {
     };
     fetchUsers();
   }, []);
+
+
+  const isUserOnline = (id) => onlineUsers?.includes(id);
 
   const handleLogout = async () => {
     try {
@@ -183,7 +186,9 @@ function Home() {
                             {activeUser.fullname.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
-                        <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white dark:border-background" />
+                        {isUserOnline(activeUser._id) && (
+                          <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white dark:border-background" />
+                        )}
                       </div>
                       <div>
                         <p className="text-sm font-medium">{activeUser.fullname}</p>
