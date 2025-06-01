@@ -1,15 +1,16 @@
 import { Server } from "socket.io";
 
+let io;
+let connectedUsers = {};
+
 const initializeSocket = (server) => {
-  const io = new Server(server, {
+  io = new Server(server, {
     cors: {
       origin: "http://localhost:5173",
       methods: ["GET", "POST"],
       credentials: true,
     },
   });
-
-  const connectedUsers = {};
 
   io.on("connection", (socket) => {
     console.log(`🤓 New client connected: ${socket.id}`);
@@ -32,4 +33,8 @@ const initializeSocket = (server) => {
   return io;
 };
 
-export default initializeSocket;
+export const getReceiverSocketId = (receiverId) => {
+  return connectedUsers[receiverId] || null;
+};
+
+export { initializeSocket, io, connectedUsers };

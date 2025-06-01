@@ -7,7 +7,7 @@ import cookieParser from "cookie-parser";
 import connectDB from "./src/config/database.js";
 import authRoutes from "./src/routes/auth-route.js";
 import messageRoute from "./src/routes/message-route.js";
-import initializeSocket from "./src/services/socket.js";
+import { initializeSocket } from "./src/services/socket.js";
 
 dotenv.config();
 
