@@ -25,11 +25,7 @@ app.use("/api/message", messageRoute);
 const PORT = process.env.PORT || 8080;
 connectDB()
   .then(() => {
-    server.listen(PORT, () => {
-      console.log(
-        chalk.yellowBright(`🚀 Server running at http://localhost:${PORT}`)
-      );
-    });
+    server.listen(PORT, () => {});
   })
   .catch((err) => {
     console.error(chalk.redBright(`❌ DB Connection Failed: ${err.message}`));

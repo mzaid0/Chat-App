@@ -13,7 +13,6 @@ const initializeSocket = (server) => {
   });
 
   io.on("connection", (socket) => {
-    console.log(`🤓 New client connected: ${socket.id}`);
 
     const userId = socket.handshake.query.userId;
 
@@ -24,7 +23,6 @@ const initializeSocket = (server) => {
     io.emit("connectedUsers", Object.keys(connectedUsers));
 
     socket.on("disconnect", () => {
-      console.log(`👋 Client disconnected: ${socket.id}`);
       delete connectedUsers[userId];
       io.emit("connectedUsers", Object.keys(connectedUsers));
     });
