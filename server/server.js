@@ -17,30 +17,8 @@ const server = http.createServer(app);
 // Initialize socket.io
 initializeSocket(server);
 
-// ✅ CORS allowed origins
-const allowedOrigins = [
-  "http://localhost:5173", // Local dev
-  "https://chat-app-mg5l.vercel.app", // Deployed frontend
-];
-
-// ✅ CORS middleware
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
-
-// ✅ Optional: handle preflight
-app.options("*", cors());
-
 // Middleware
+app.use(cors({ origin:"https://chat-app-mg5l.vercel.app", credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -56,7 +34,7 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 8080;
 const NODE_ENV = process.env.NODE_ENV || "development";
 
-// ✅ Keep your condition: only listen when NOT in production
+// Connect to DB and start server only if not explicitly blocked
 connectDB()
   .then(() => {
     if (NODE_ENV !== "production") {
@@ -66,7 +44,7 @@ connectDB()
         );
       });
     } else {
-      console.log(chalk.yellow("⚠️ Server not started in production mode."));
+      console.log(chalk.yellow("⚠️ Server not started in test mode."));
     }
   })
   .catch((err) => {
