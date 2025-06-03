@@ -5,7 +5,10 @@ let connectedUsers = {};
 
 const initializeSocket = (server) => {
   io = new Server(server, {
-    cors: { origin: "*" },
+    cors: {
+      origin: ["http://localhost:5173", "https://chat-app-mu-vert.vercel.app"],
+      credentials: true,
+    },
   });
 
   io.on("connection", (socket) => {
