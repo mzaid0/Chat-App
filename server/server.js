@@ -51,3 +51,5 @@ connectDB()
     console.error(chalk.redBright(`❌ DB Connection Failed: ${err.message}`));
     process.exit(1);
   });
+
+export default server;
