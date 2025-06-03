@@ -37,7 +37,7 @@ const NODE_ENV = process.env.NODE_ENV || "development";
 // Connect to DB and start server only if not explicitly blocked
 connectDB()
   .then(() => {
-    if (NODE_ENV !== "test") {
+    if (NODE_ENV !== "production") {
       server.listen(PORT, () => {
         console.log(
           chalk.greenBright(`✅ Server running on port ${PORT} [${NODE_ENV}]`)
