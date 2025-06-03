@@ -1,8 +1,8 @@
-import axios from 'axios';
-import { toast } from 'sonner';
+import axios from "axios";
+import { toast } from "sonner";
 
 const api = axios.create({
-  baseURL: 'https://chat-app-backend-liard-psi.vercel.app/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8080/api",
   withCredentials: true,
 });
 
@@ -10,9 +10,9 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      toast.error(error.response.data.message || 'An error occurred');
+      toast.error(error.response.data.message || "An error occurred");
     } else {
-      toast.error('Network error');
+      toast.error("Network error");
     }
     return Promise.reject(error);
   }

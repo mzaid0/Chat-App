@@ -18,7 +18,7 @@ const server = http.createServer(app);
 initializeSocket(server);
 
 // Middleware
-app.use(cors({ origin:"https://chat-app-mg5l.vercel.app", credentials: true }));
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 

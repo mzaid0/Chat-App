@@ -5,15 +5,10 @@ let connectedUsers = {};
 
 const initializeSocket = (server) => {
   io = new Server(server, {
-    cors: {
-      origin: "http://localhost:5173",
-      methods: ["GET", "POST"],
-      credentials: true,
-    },
+    cors: { origin: "*" },
   });
 
   io.on("connection", (socket) => {
-
     const userId = socket.handshake.query.userId;
 
     if (userId) {
